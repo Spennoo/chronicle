@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chronicle — History GCSE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16130E;--ink2:#5C5850;--ink3:#9C9890;
+  --bg:#F5F1EA;--surface:#FDFCF9;--rule:#E4DFD6;
+  --gold:#C4922A;--accent:#2C4A3E;--red:#8B2020;
+  --c-green-bg:#E8F2EE;--c-green-txt:#1A3A2E;--c-green-b:#AACFBC;
+  --c-amber-bg:#FFF3DC;--c-amber-txt:#5A3500;--c-amber-b:#E8CC88;
+  --c-red-bg:#FDEAEA;--c-red-txt:#6B1515;--c-red-b:#D4AAAA;
+  --c-none-bg:#EEEAE4;--c-none-txt:#5C5850;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.65;min-height:100vh}
+
+/* ════════════════════════════════════════
+   LOGIN
+════════════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:stretch;min-height:100vh;
+  background:#0E0C09;
+  transition:opacity 0.5s,visibility 0.5s;
+}
+#login-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+
+.lp-left{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:3rem;
+}
+.lp-left-bg{position:absolute;inset:0;background:#0E0C09}
+.lp-left-bg::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(196,146,42,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(196,146,42,0.06) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.lp-left-bg::after{
+  content:'GCSE';position:absolute;bottom:-40px;right:-20px;
+  font-family:'Cormorant Garamond',serif;font-size:28vw;font-weight:300;
+  color:rgba(196,146,42,0.04);line-height:1;letter-spacing:-0.05em;
+  pointer-events:none;white-space:nowrap;
+}
+.lp-left-content{position:relative;z-index:1}
+.lp-tag{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(196,146,42,0.7);margin-bottom:1.5rem;font-weight:500}
+.lp-headline{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:300;color:#F5F1EA;line-height:1.15;letter-spacing:-0.02em;margin-bottom:1.5rem;
+}
+.lp-headline em{font-style:italic;color:rgba(196,146,42,0.9)}
+.lp-subjects{display:flex;flex-direction:column;gap:6px}
+.lp-subject{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(245,241,234,0.35);letter-spacing:0.04em}
+.lp-subject::before{content:'';width:20px;height:1px;background:rgba(196,146,42,0.3);flex-shrink:0}
+.lp-divider{width:1px;background:rgba(255,255,255,0.06);flex-shrink:0}
+
+.lp-right{
+  width:420px;flex-shrink:0;display:flex;flex-direction:column;
+  justify-content:center;padding:3.5rem 3rem;background:#0E0C09;position:relative;
+}
+.lp-right::before{
+  content:'';position:absolute;top:0;left:3rem;right:3rem;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(196,146,42,0.4),transparent);
+}
+.lp-brand{margin-bottom:3rem}
+.lp-brand-name{
+  font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;
+  color:#F5F1EA;letter-spacing:-0.01em;
+}
+.lp-brand-name span{color:rgba(196,146,42,0.9);font-style:italic}
+.lp-brand-sub{font-size:11px;color:rgba(245,241,234,0.3);letter-spacing:0.1em;text-transform:uppercase;margin-top:5px}
+.lp-label{display:block;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,241,234,0.35);margin-bottom:8px;font-weight:500}
+.lp-input{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:4px;padding:13px 16px;font-size:15px;color:#F5F1EA;
+  font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,background 0.2s;
+}
+.lp-input:focus{border-color:rgba(196,146,42,0.5);background:rgba(196,146,42,0.04)}
+.lp-input::placeholder{color:rgba(245,241,234,0.15)}
+.lp-show{display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;justify-content:flex-end}
+.lp-show input{accent-color:rgba(196,146,42,0.8);cursor:pointer}
+.lp-show label{font-size:11px;color:rgba(245,241,234,0.3);letter-spacing:0.05em;cursor:pointer}
+.lp-btn{
+  width:100%;margin-top:1.75rem;padding:14px;background:rgba(196,146,42,0.9);border:none;
+  border-radius:4px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;
+  color:#0E0C09;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;transition:background 0.2s;
+}
+.lp-btn:hover{background:rgba(196,146,42,1)}
+.lp-error{font-size:12px;color:rgba(220,80,80,0.8);margin-top:10px;text-align:center;min-height:18px}
+.lp-footer{margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.lp-footer p{font-size:11px;color:rgba(245,241,234,0.2);line-height:1.7}
+.lp-footer p strong{color:rgba(245,241,234,0.35);font-weight:500}
+.lp-version{position:absolute;bottom:1.5rem;right:2rem;font-size:10px;color:rgba(245,241,234,0.15);letter-spacing:0.08em}
+
+@media(max-width:768px){
+  .lp-left,.lp-divider{display:none}
+  .lp-right{width:100%;padding:2.5rem 2rem}
+}
+
+/* ════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════ */
+#app{display:none}
+.topbar{
+  background:var(--ink);color:var(--bg);height:56px;padding:0 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;letter-spacing:0.01em}
+.topbar-logo span{color:var(--gold);font-style:italic}
+.topbar-nav{display:flex;gap:2px}
+.nb{
+  padding:6px 14px;font-size:13px;border:none;background:transparent;
+  color:rgba(245,241,234,0.45);cursor:pointer;border-radius:4px;
+  font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;
+}
+.nb:hover{color:var(--bg);background:rgba(255,255,255,0.08)}
+.nb.active{color:var(--bg);background:rgba(255,255,255,0.12)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.logout-btn{
+  padding:5px 12px;font-size:12px;border:1px solid rgba(255,255,255,0.15);
+  border-radius:4px;background:transparent;color:rgba(245,241,234,0.4);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.logout-btn:hover{border-color:rgba(255,255,255,0.35);color:var(--bg)}
+
+/* quiz banner */
+#quiz-banner{
+  background:var(--accent);color:#E8F2EE;padding:0.7rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+}
+.qb-left{display:flex;align-items:center;gap:10px;font-size:13px}
+.qb-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.qb-btn{
+  padding:5px 16px;background:var(--gold);border:none;border-radius:4px;
+  font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;
+  font-family:'DM Sans',sans-serif;letter-spacing:0.04em;transition:opacity 0.15s;
+}
+.qb-btn:hover{opacity:0.85}
+
+/* ════════════════════════════════════════
+   PAGES
+════════════════════════════════════════ */
+.page{display:none;max-width:940px;margin:0 auto;padding:2rem}
+.page.active{display:block}
+.ph{margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--rule)}
+.ph-title{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:500;letter-spacing:-0.02em}
+.ph-sub{font-size:13px;color:var(--ink2);margin-top:5px}
+
+/* ════════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════ */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem}
+.sc{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.1rem}
+.sc-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);margin-bottom:6px}
+.sc-val{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;line-height:1;color:var(--ink)}
+.sc-sub{font-size:11px;color:var(--ink3);margin-top:3px}
+.sc-bar{height:4px;background:var(--rule);border-radius:2px;margin-top:10px;overflow:hidden}
+.sc-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.5s}
+
+.weak-box{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.4rem;margin-bottom:1.5rem}
+.weak-heading{
+  display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;
+  text-transform:uppercase;letter-spacing:0.08em;color:var(--red);margin-bottom:1rem;
+}
+.weak-heading::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0}
+.weak-items{display:flex;flex-direction:column;gap:6px}
+.weak-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:var(--c-red-bg);border-radius:6px;gap:1rem;
+}
+.weak-item-name{font-size:13px;font-weight:500;color:var(--c-red-txt);flex:1}
+.weak-item-book{font-size:11px;color:var(--ink3)}
+.weak-practise{
+  padding:3px 10px;border-radius:4px;border:1px solid var(--c-red-b);
+  background:transparent;font-size:11px;color:var(--c-red-txt);
+  cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all 0.15s;
+}
+.weak-practise:hover{background:var(--red);color:#FFF;border-color:var(--red)}
+.weak-none{font-size:13px;color:var(--ink3);font-style:italic}
+
+.book-progress-list{display:flex;flex-direction:column;gap:8px}
+.bpl-item{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:0.9rem 1.1rem}
+.bpl-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.bpl-name{font-size:13px;font-weight:500;color:var(--ink)}
+.bpl-pct{font-size:13px;color:var(--ink3);font-family:'Cormorant Garamond',serif;font-size:1rem}
+.bpl-bar{height:4px;background:var(--rule);border-radius:2px;overflow:hidden}
+.bpl-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.5s}
+
+/* ════════════════════════════════════════
+   SPEC TRACKER
+════════════════════════════════════════ */
+.book-sec{background:var(--surface);border:1px solid var(--rule);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.book-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.2rem;cursor:pointer;transition:background 0.15s;gap:1rem;
+}
+.book-head:hover{background:rgba(0,0,0,0.018)}
+.bh-left{display:flex;align-items:center;gap:12px}
+.bh-num{
+  width:27px;height:27px;border-radius:50%;background:var(--ink);
+  color:var(--bg);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;flex-shrink:0;
+}
+.bh-title{font-size:15px;font-weight:500;color:var(--ink)}
+.bh-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.bh-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.bh-pct{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:500;color:var(--ink)}
+.bh-chev{color:var(--ink3);font-size:13px;transition:transform 0.2s}
+.bh-chev.open{transform:rotate(180deg)}
+.book-prog{height:2px;background:var(--rule);overflow:hidden}
+.book-prog-fill{height:100%;background:var(--accent);transition:width 0.4s}
+.book-body{display:none}
+.book-body.open{display:block}
+.ch-label{
+  padding:0.55rem 1.2rem 0.35rem;font-size:10px;text-transform:uppercase;
+  letter-spacing:0.08em;color:var(--ink3);background:rgba(0,0,0,0.015);
+  font-weight:500;border-top:1px solid var(--rule);
+}
+.topic-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.5rem 1.2rem;border-top:1px solid var(--rule);gap:1rem;
+  transition:background 0.1s;
+}
+.topic-row:hover{background:rgba(0,0,0,0.015)}
+.topic-name{font-size:13px;color:var(--ink);flex:1;line-height:1.5}
+.conf-grp{display:flex;gap:4px;flex-shrink:0}
+.cb{
+  padding:3px 10px;border-radius:20px;border:1px solid var(--rule);
+  font-size:11px;font-weight:500;cursor:pointer;background:transparent;
+  color:var(--ink3);font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;
+}
+.cb:hover{border-color:var(--ink3);color:var(--ink2)}
+.cb.c1.on{background:var(--c-red-bg);border-color:var(--c-red-b);color:var(--c-red-txt)}
+.cb.c2.on{background:var(--c-amber-bg);border-color:var(--c-amber-b);color:var(--c-amber-txt)}
+.cb.c3.on{background:var(--c-green-bg);border-color:var(--c-green-b);color:var(--c-green-txt)}
+
+/* ════════════════════════════════════════
+   QUESTIONS
+════════════════════════════════════════ */
+.q-tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.qt{
+  padding:7px 16px;border-radius:6px;border:1px solid var(--rule);
+  background:var(--surface);font-size:13px;font-weight:500;cursor:pointer;
+  color:var(--ink2);font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.qt:hover{border-color:var(--ink3)}
+.qt.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.qsec{display:none}.qsec.active{display:block}
+
+/* Generator */
+.gen-card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.4rem;margin-bottom:1.25rem}
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.gen-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);margin-bottom:6px;display:block}
+.gen-sel{
+  width:100%;padding:9px 12px;border:1px solid var(--rule);border-radius:6px;
+  background:var(--bg);font-size:13.5px;color:var(--ink);font-family:'DM Sans',sans-serif;
+  cursor:pointer;outline:none;transition:border-color 0.15s;
+}
+.gen-sel:focus{border-color:var(--ink3)}
+.gen-go{
+  padding:10px 24px;background:var(--ink);border:none;border-radius:6px;
+  font-size:13px;font-weight:500;color:var(--bg);cursor:pointer;
+  font-family:'DM Sans',sans-serif;letter-spacing:0.03em;transition:opacity 0.15s;
+}
+.gen-go:hover{opacity:0.85}
+.gen-out{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.4rem;min-height:100px}
+.gen-badge{
+  display:inline-block;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:0.06em;background:var(--ink);color:var(--bg);margin-bottom:1rem;
+}
+.gen-q{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;line-height:1.55;color:var(--ink);margin-bottom:0.9rem}
+.gen-marks{font-size:12px;color:var(--ink3);margin-bottom:0.9rem}
+.gen-tips{background:var(--c-none-bg);border-radius:6px;padding:0.9rem 1rem;font-size:13px;color:var(--ink2);line-height:1.7}
+.gen-tips strong{color:var(--ink);font-weight:500}
+.gen-placeholder{font-size:13px;color:var(--ink3);font-style:italic;display:flex;align-items:center;justify-content:center;padding:2rem 0}
+
+/* Past papers */
+.pp-year{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);margin:1.25rem 0 8px;font-weight:500}
+.pp-grid{display:flex;flex-direction:column;gap:7px}
+.pp-card{
+  background:var(--surface);border:1px solid var(--rule);border-radius:8px;
+  padding:0.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  transition:border-color 0.15s;
+}
+.pp-card:hover{border-color:var(--ink3)}
+.pp-title{font-size:13.5px;font-weight:500;color:var(--ink)}
+.pp-meta{font-size:11px;color:var(--ink3);margin-top:2px}
+.pp-links{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.pp-link{
+  padding:5px 12px;border-radius:4px;font-size:12px;font-weight:500;
+  border:1px solid var(--rule);color:var(--ink2);text-decoration:none;
+  background:var(--bg);transition:all 0.15s;
+}
+.pp-link:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pp-link.ms{border-color:var(--c-green-b);color:var(--c-green-txt)}
+.pp-link.ms:hover{background:var(--accent);border-color:var(--accent);color:#E8F2EE}
+
+/* Explainer */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.exp-card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.2rem}
+.exp-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.6rem}
+.exp-title{font-size:14px;font-weight:500;color:var(--ink)}
+.exp-marks{font-size:11px;color:var(--ink3)}
+.exp-papers{font-size:10px;color:var(--gold);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem}
+.exp-stem{
+  font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;
+  color:var(--ink2);margin-bottom:0.7rem;line-height:1.5;
+  padding-left:0.75rem;border-left:2px solid var(--rule);
+}
+.exp-ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.exp-ul li{font-size:12.5px;color:var(--ink2);padding-left:13px;position:relative;line-height:1.5}
+.exp-ul li::before{content:'→';position:absolute;left:0;color:var(--ink3);font-size:10px;top:3px}
+.exp-tip{margin-top:0.7rem;padding:0.55rem 0.75rem;background:var(--c-amber-bg);border-radius:5px;font-size:12px;color:var(--c-amber-txt);line-height:1.5}
+
+/* ════════════════════════════════════════
+   QUIZ MODAL
+════════════════════════════════════════ */
+#quiz-modal{
+  position:fixed;inset:0;background:rgba(22,19,14,0.72);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#quiz-modal.open{display:flex}
+.qm-box{
+  background:var(--surface);border-radius:12px;width:100%;max-width:500px;
+  padding:1.75rem;max-height:90vh;overflow-y:auto;
+}
+.qm-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.25rem}
+.qm-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:500}
+.qm-close{background:none;border:none;font-size:22px;color:var(--ink3);cursor:pointer;line-height:1}
+.qm-prog{height:3px;background:var(--rule);border-radius:2px;margin-bottom:1.25rem;overflow:hidden}
+.qm-prog-fill{height:100%;background:var(--accent);transition:width 0.3s}
+.qm-num{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);margin-bottom:4px}
+.qm-topic{font-size:10px;color:var(--gold);font-weight:500;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.7rem}
+.qm-q{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;line-height:1.5;margin-bottom:1.25rem;color:var(--ink)}
+.qm-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:1.25rem}
+.qm-opt{
+  padding:10px 15px;border:1px solid var(--rule);border-radius:7px;
+  background:var(--bg);font-size:13.5px;color:var(--ink);cursor:pointer;
+  text-align:left;font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.qm-opt:hover:not(:disabled){border-color:var(--ink3);background:var(--surface)}
+.qm-opt.correct{background:var(--c-green-bg);border-color:var(--c-green-b);color:var(--c-green-txt)}
+.qm-opt.wrong{background:var(--c-red-bg);border-color:var(--c-red-b);color:var(--c-red-txt)}
+.qm-opt.reveal{background:var(--c-green-bg);border-color:var(--c-green-b);color:var(--c-green-txt)}
+.qm-exp{background:var(--c-none-bg);border-radius:6px;padding:0.7rem 0.9rem;font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:1rem;display:none}
+.qm-exp.show{display:block}
+.qm-next{
+  width:100%;padding:11px;background:var(--ink);border:none;border-radius:6px;
+  font-size:13px;font-weight:500;color:var(--bg);cursor:pointer;
+  font-family:'DM Sans',sans-serif;display:none;transition:opacity 0.15s;
+}
+.qm-next.show{display:block}
+.qm-next:hover{opacity:0.85}
+.qm-score{text-align:center;padding:0.75rem 0}
+.qm-score-n{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:600;line-height:1;color:var(--ink)}
+.qm-score-label{font-size:13px;color:var(--ink3);margin-top:4px}
+.qm-score-msg{font-size:14px;color:var(--ink2);margin-top:1rem;line-height:1.6;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:1.1rem}
+.qm-again{
+  width:100%;margin-top:10px;padding:11px;border:1px solid var(--rule);border-radius:6px;
+  font-size:13px;color:var(--ink2);background:transparent;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.qm-again:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+@media(max-width:640px){
+  .gen-grid,.exp-grid{grid-template-columns:1fr}
+  .topbar-nav{display:none}
+  .page{padding:1rem}
+  .pp-card{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ LOGIN ════ -->
+<div id="login-screen">
+  <div class="lp-left">
+    <div class="lp-left-bg"></div>
+    <div class="lp-left-content">
+      <div class="lp-tag">Edexcel GCSE · History · 2026</div>
+      <div class="lp-headline">Master your<br><em>History</em><br>papers.</div>
+      <div class="lp-subjects">
+        <div class="lp-subject">Weimar &amp; Nazi Germany 1918–39</div>
+        <div class="lp-subject">Superpower Relations &amp; the Cold War</div>
+        <div class="lp-subject">Warfare Through Time c.1250–present</div>
+        <div class="lp-subject">Early Elizabethan England 1558–88</div>
+      </div>
+    </div>
+  </div>
+  <div class="lp-divider"></div>
+  <div class="lp-right">
+    <div class="lp-brand">
+      <div class="lp-brand-name">Chron<span>icle</span></div>
+      <div class="lp-brand-sub">GCSE History Platform</div>
+    </div>
+    <label class="lp-label" for="pw-in">Access password</label>
+    <input class="lp-input" type="password" id="pw-in" placeholder="Enter your password" autocomplete="current-password">
+    <div class="lp-show">
+      <input type="checkbox" id="pw-show" onchange="document.getElementById('pw-in').type=this.checked?'text':'password'">
+      <label for="pw-show">Show password</label>
+    </div>
+    <button class="lp-btn" id="login-btn">Access platform</button>
+    <div class="lp-error" id="login-error"></div>
+    <div class="lp-footer">
+      <p><strong>Chronicle</strong> is a personalised revision platform built around your Edexcel specification. Track your confidence, practise questions, and access past papers — all in one place.</p>
+    </div>
+    <div class="lp-version">v1.0 · Easter 2026</div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">Chron<span>icle</span></div>
+    <div class="topbar-right">
+      <div class="topbar-nav">
+        <button class="nb active" onclick="showPage('dashboard')">Dashboard</button>
+        <button class="nb" onclick="showPage('tracker')">Spec tracker</button>
+        <button class="nb" onclick="showPage('questions')">Questions</button>
+      </div>
+      <button class="logout-btn" onclick="logout()">Log out</button>
+    </div>
+  </div>
+
+  <div id="quiz-banner">
+    <div class="qb-left">
+      <div class="qb-dot"></div>
+      <span style="font-size:13px">Daily knowledge check &mdash; <strong id="qb-topic">loading...</strong></span>
+    </div>
+    <button class="qb-btn" onclick="openQuiz()">Start quiz</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="ph">
+      <div class="ph-title">Dashboard</div>
+      <div class="ph-sub">Edexcel GCSE History &middot; Easter 2026</div>
+    </div>
+    <div class="stats-grid">
+      <div class="sc"><div class="sc-label">Confident</div><div class="sc-val" id="d-conf">0</div><div class="sc-sub" id="d-conf-sub">of 0 topics</div><div class="sc-bar"><div class="sc-bar-fill" id="d-bar" style="width:0%"></div></div></div>
+      <div class="sc"><div class="sc-label">Need work</div><div class="sc-val" id="d-weak">0</div><div class="sc-sub">rated not confident</div></div>
+      <div class="sc"><div class="sc-label">Getting there</div><div class="sc-val" id="d-amber">0</div><div class="sc-sub">in progress</div></div>
+      <div class="sc"><div class="sc-label">Not started</div><div class="sc-val" id="d-none">0</div><div class="sc-sub">untouched</div></div>
+    </div>
+    <div class="weak-box">
+      <div class="weak-heading">Needs your attention</div>
+      <div class="weak-items" id="weak-list"></div>
+    </div>
+    <div class="book-progress-list" id="book-prog-list"></div>
+  </div>
+
+  <!-- TRACKER -->
+  <div class="page" id="page-tracker">
+    <div class="ph">
+      <div class="ph-title">Spec tracker</div>
+      <div class="ph-sub">Rate each topic — progress saves automatically</div>
+    </div>
+    <div id="tracker-content"></div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div class="page" id="page-questions">
+    <div class="ph">
+      <div class="ph-title">Practice questions</div>
+      <div class="ph-sub">Question generator &middot; past paper bank &middot; question type guide</div>
+    </div>
+    <div class="q-tabs">
+      <button class="qt active" onclick="showQSec('generator',this)">Question generator</button>
+      <button class="qt" onclick="showQSec('pastpapers',this)">Past paper bank</button>
+      <button class="qt" onclick="showQSec('explainer',this)">Question type guide</button>
+    </div>
+
+    <!-- Generator -->
+    <div class="qsec active" id="qs-generator">
+      <div class="gen-card">
+        <div class="gen-grid">
+          <div>
+            <span class="gen-label">Topic</span>
+            <select class="gen-sel" id="gen-topic">
+              <option value="">Select a topic...</option>
+              <optgroup label="Weimar &amp; Nazi Germany">
+                <option value="weimar_origins">Origins of the Weimar Republic 1918–19</option>
+                <option value="weimar_challenges">Early challenges to the Weimar Republic</option>
+                <option value="weimar_recovery">Recovery under Stresemann 1924–29</option>
+                <option value="weimar_society">Changes in society 1924–29</option>
+                <option value="nazi_early">Early development of the Nazi Party</option>
+                <option value="nazi_putsch">The Munich Putsch 1923</option>
+                <option value="nazi_growth">Growth in Nazi support 1929–32</option>
+                <option value="nazi_chancellor">How Hitler became Chancellor 1932–33</option>
+                <option value="nazi_dictatorship">Creation of a dictatorship 1933–34</option>
+                <option value="nazi_police">The Nazi police state</option>
+                <option value="nazi_propaganda">Propaganda and control of attitudes</option>
+                <option value="nazi_opposition">Opposition, resistance and conformity</option>
+                <option value="nazi_women">Nazi policies towards women</option>
+                <option value="nazi_youth">Nazi policies towards young people</option>
+                <option value="nazi_employment">Employment and living standards</option>
+                <option value="nazi_persecution">Persecution of minorities</option>
+              </optgroup>
+              <optgroup label="Cold War / Superpower Relations">
+                <option value="cw_tensions">Early tensions between East and West</option>
+                <option value="cw_development">Development of the Cold War</option>
+                <option value="cw_intensifies">The Cold War intensifies</option>
+                <option value="cw_berlin">Berlin crisis 1958–63</option>
+                <option value="cw_cuba">Cuban Missile Crisis 1962</option>
+                <option value="cw_czech">Czechoslovakia 1968–69</option>
+                <option value="cw_detente">Détente and reducing tension</option>
+                <option value="cw_flashpoints">Flashpoints — Afghanistan &amp; Reagan</option>
+                <option value="cw_collapse">Collapse of Soviet control 1989–91</option>
+              </optgroup>
+              <optgroup label="Warfare Through Time">
+                <option value="war_medieval_nature">Nature of warfare 1250–1500</option>
+                <option value="war_medieval_exp">Experience of warfare 1250–1500</option>
+                <option value="war_falkirk">Battle of Falkirk 1298</option>
+                <option value="war_agincourt">Battle of Agincourt 1415</option>
+                <option value="war_1500_nature">Nature of warfare 1500–1700</option>
+                <option value="war_1500_exp">Experience of war 1500–1700</option>
+                <option value="war_naseby">Battle of Naseby 1645</option>
+                <option value="war_1700_nature">Nature of warfare 1700–1850</option>
+                <option value="war_1700_exp">Experience of warfare 1700–1850</option>
+                <option value="war_1850_nature">Nature of warfare 1850–1900</option>
+                <option value="war_waterloo">Battle of Waterloo 1815</option>
+                <option value="war_balaclava">Battle of Balaclava 1854</option>
+                <option value="war_modern_nature">Nature of warfare 1900–present</option>
+                <option value="war_modern_exp">Experience of war 1900–present</option>
+                <option value="war_wwi">Western Front &amp; Battle of the Somme</option>
+                <option value="war_iraq">The Iraq War 2003</option>
+                <option value="war_blitz1">The First Blitz 1940–41</option>
+                <option value="war_blitz_impact">Impact of the Blitz on civilians</option>
+                <option value="war_v1v2">V1 and V2 attacks 1944–45</option>
+              </optgroup>
+              <optgroup label="Early Elizabethan England">
+                <option value="eliz_accession">Elizabeth's accession 1558</option>
+                <option value="eliz_religion">The religious settlement 1559</option>
+                <option value="eliz_challenge_rel">Challenges to the religious settlement</option>
+                <option value="eliz_mary">The problem of Mary Queen of Scots</option>
+                <option value="eliz_plots">Plots and revolts at home</option>
+                <option value="eliz_spain">Relations with Spain</option>
+                <option value="eliz_war_spain">Outbreak of war with Spain 1585–88</option>
+                <option value="eliz_armada">The Spanish Armada 1588</option>
+                <option value="eliz_education">Education and leisure</option>
+                <option value="eliz_poor">The problem of the poor</option>
+                <option value="eliz_exploration">Voyages of exploration and discovery</option>
+                <option value="eliz_virginia">Raleigh and Virginia</option>
+              </optgroup>
+            </select>
+          </div>
+          <div>
+            <span class="gen-label">Question type</span>
+            <select class="gen-sel" id="gen-qtype">
+              <option value="">Select type...</option>
+              <option value="describe4">4-mark — Describe two features</option>
+              <option value="infer4">4-mark — Source inference</option>
+              <option value="explain12">12-mark — Explain why</option>
+              <option value="useful12">12-mark — Source utility</option>
+              <option value="essay16">16-mark — How far do you agree (essay)</option>
+              <option value="interp16">16-mark — Interpretation question (Warfare only)</option>
+            </select>
+          </div>
+        </div>
+        <button class="gen-go" onclick="generateQ()">Generate question</button>
+      </div>
+      <div class="gen-out" id="gen-out"><div class="gen-placeholder">Select a topic and question type, then click generate</div></div>
+    </div>
+
+    <!-- Past Papers -->
+    <div class="qsec" id="qs-pastpapers">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:1.25rem;line-height:1.65">Direct links to past papers and mark schemes for your four topics. Click <strong>Q Paper</strong> to open the question paper and <strong>Mark scheme</strong> to check answers.</p>
+      <div id="pp-content"></div>
+    </div>
+
+    <!-- Explainer -->
+    <div class="qsec" id="qs-explainer">
+      <div class="exp-grid" id="exp-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div id="quiz-modal">
+  <div class="qm-box">
+    <div class="qm-head">
+      <div class="qm-title">Daily knowledge check</div>
+      <button class="qm-close" onclick="closeQuiz()">×</button>
+    </div>
+    <div class="qm-prog"><div class="qm-prog-fill" id="qm-fill" style="width:0%"></div></div>
+    <div id="qm-body"></div>
+  </div>
+</div>
+
+<script>
+// ── AUTH ──────────────────────────────────────────────────────
+const PW='Edexcel1', AK='chronicle-auth', SK='chronicle-progress';
+
+document.getElementById('login-btn').addEventListener('click', tryLogin);
+document.getElementById('pw-in').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+
+function tryLogin(){
+  if(document.getElementById('pw-in').value===PW){
+    localStorage.setItem(AK,'1');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').style.display='block';
+    boot();
+  } else {
+    const e=document.getElementById('login-error');
+    e.textContent='Incorrect password. Please try again.';
+    document.getElementById('pw-in').value='';
+    setTimeout(()=>e.textContent='',3000);
+  }
+}
+function logout(){
+  localStorage.removeItem(AK);
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('pw-in').value='';
+  document.getElementById('pw-in').type='password';
+  document.getElementById('pw-show').checked=false;
+}
+
+// ── DATA ──────────────────────────────────────────────────────
+const BOOKS=[
+  { id:'weimar', title:'Weimar & Nazi Germany 1918–39', sub:'Edexcel Option 31 · Paper 3',
+    chapters:[
+      { label:'Chapter 1 — The Weimar Republic 1918–29', topics:[
+        '1.1 The origins of the Weimar Republic 1918–19 — November Revolution, new constitution',
+        '1.2 Early challenges — Spartacist Revolt, Kapp Putsch, hyperinflation 1923',
+        '1.3 Recovery under Stresemann 1924–29 — Dawes Plan, Locarno, League of Nations',
+        '1.4 Changes in society 1924–29 — culture, women, living standards, Weimar culture',
+      ]},
+      { label:'Chapter 2 — Hitler\'s Rise to Power 1919–33', topics:[
+        '2.1 Early development of the Nazi Party 1919–22 — DAP, 25 Points, SA',
+        '2.2 The Munich Putsch 1923 and lean years — trial, Mein Kampf, rebuilding the party',
+        '2.3 Growth in Nazi support 1929–32 — impact of the Great Depression, propaganda',
+        '2.4 How Hitler became Chancellor 1932–33 — Hindenburg, von Papen, backroom deals',
+      ]},
+      { label:'Chapter 3 — Nazi Control & Dictatorship 1933–39', topics:[
+        '3.1 Creation of a dictatorship — Reichstag Fire, Enabling Act 1933, Night of Long Knives 1934',
+        '3.2 The Nazi police state — SS, Gestapo, courts, concentration camps',
+        '3.3 Controlling attitudes — Goebbels, Ministry of Propaganda, radio, film, rallies',
+        '3.4 Opposition, resistance and conformity — White Rose, churches, extent of resistance',
+      ]},
+      { label:'Chapter 4 — Life in Nazi Germany 1933–39', topics:[
+        '4.1 Nazi policies towards women — Kinder, Küche, Kirche; marriage loans; role in war effort',
+        '4.2 Nazi policies towards young people — Hitler Youth, League of German Girls, education',
+        '4.3 Employment and living standards — Strength through Joy, Beauty of Labour, DAF',
+        '4.4 Persecution of minorities — Jews, Nuremberg Laws 1935, Kristallnacht 1938',
+      ]},
+    ]
+  },
+  { id:'coldwar', title:'Superpower Relations & the Cold War 1941–91', sub:'Edexcel Paper 2',
+    chapters:[
+      { label:'Chapter 1 — Origins of the Cold War 1941–58', topics:[
+        '1.1 Early tensions — ideological differences, wartime alliance, Yalta and Potsdam conferences',
+        '1.2 Development of the Cold War — Iron Curtain, Truman Doctrine, Marshall Plan, NATO',
+        '1.3 The Cold War intensifies — arms race, Korean War 1950–53, Berlin Blockade 1948–49',
+      ]},
+      { label:'Chapter 2 — Cold War Crises 1958–70', topics:[
+        '2.1 Berlin 1958–63 — ultimatum, Berlin Wall built August 1961, Kennedy\'s response',
+        '2.2 The Cuban Missile Crisis 1962 — causes, 13 days, resolution, significance',
+        '2.3 Czechoslovakia 1968–69 — Prague Spring, Dubček, Soviet invasion, Brezhnev Doctrine',
+      ]},
+      { label:'Chapter 3 — End of the Cold War 1970–91', topics:[
+        '3.1 Attempts to reduce tension — détente, SALT I 1972, SALT II 1979, Helsinki Accords 1975',
+        '3.2 Flashpoints — Soviet invasion of Afghanistan 1979, Reagan\'s arms build-up, SDI',
+        '3.3 Collapse of Soviet control — Gorbachev\'s glasnost & perestroika, fall of Berlin Wall 1989, USSR collapse 1991',
+      ]},
+    ]
+  },
+  { id:'warfare', title:'Warfare Through Time c.1250–present', sub:'Edexcel Option 12 · Thematic study',
+    chapters:[
+      { label:'Chapter 1 — Medieval Warfare c.1250–c.1500', topics:[
+        '1.1 Nature of warfare 1250–1500 — feudal armies, cavalry, castles, siege warfare',
+        '1.2 Experience of warfare 1250–1500 — soldiers, civilians, chivalry, cost',
+        '1.3 Case study: Battle of Falkirk 1298 — Edward I vs Wallace, longbow vs schiltron',
+        '1.4 Case study: Battle of Agincourt 1415 — longbow dominance, Henry V, terrain',
+      ]},
+      { label:'Chapter 2 — Early Modern Period c.1500–c.1700', topics:[
+        '2.1 Nature of warfare 1500–1700 — gunpowder revolution, professional armies, tactics',
+        '2.2 Experience of war 1500–1700 — discipline, civilian suffering, cost of war',
+        '2.3 Case study: Battle of Naseby 1645 — New Model Army, English Civil War, significance',
+      ]},
+      { label:'Chapter 3 — Industrial Age c.1700–c.1900', topics:[
+        '3.1 Nature of warfare 1700–1850 — linear tactics, supply lines, role of navy',
+        '3.2 Experience of warfare 1700–1850 — conditions, surgery, disease, discipline',
+        '3.3 Nature of warfare 1850–1900 — rifles, railways, industrialised war, mass armies',
+        '3.4 Experience of warfare 1850–1900 — Crimea, press reporting, nursing reform',
+        '3.5 Case study: Battle of Waterloo 1815 — Wellington, Napoleon, decisive victory',
+        '3.6 Case study: Battle of Balaclava 1854 — Charge of the Light Brigade, command failures',
+      ]},
+      { label:'Chapter 4 — Modern Era c.1900–present', topics:[
+        '4.1 Nature of warfare 1900–present — total war, technology, air power, nuclear weapons',
+        '4.2 Experience of war 1900–present — civilians, propaganda, shell shock, modern PTSD',
+        '4.3 Western Front & Battle of the Somme 1916 — trench warfare, July 1st casualties',
+        '4.4 The Iraq War 2003 — causes, conduct, controversy, media coverage',
+      ]},
+      { label:'Chapter 5 — Historic Environment: London in WWII', topics:[
+        '5.1 Context of London in the Second World War — strategic importance, population',
+        '5.2 The First Blitz September 1940–May 1941 — bombing campaigns, targets',
+        '5.3 Impact of the Blitz on civilian life — shelters, evacuation, morale, casualties',
+        '5.4 V1 and V2 attacks June 1944–March 1945 — flying bombs, terror weapons',
+        '5.5 London\'s response to bombing — ARP, fire service, community spirit',
+      ]},
+    ]
+  },
+  { id:'elizabethan', title:'Early Elizabethan England 1558–88', sub:'Edexcel Period study · Paper 3',
+    chapters:[
+      { label:'Chapter 1 — Queen, Government & Religion', topics:[
+        '1.1 Elizabeth\'s accession 1558 — threats, legitimacy, marriage question, Privy Council',
+        '1.2 The religious settlement 1559 — Acts of Supremacy & Uniformity, compromise',
+        '1.3 Challenges to the settlement — Puritan pressure, Catholic resistance, Northern Earls 1569',
+        '1.4 The problem of Mary Queen of Scots — rival claimant, plots, execution 1587',
+      ]},
+      { label:'Chapter 2 — Challenges to Elizabeth at Home & Abroad', topics:[
+        '2.1 Plots and revolts — Ridolfi 1571, Throckmorton 1583, Babington 1586, Walsingham',
+        '2.2 Relations with Spain — trade disputes, Netherlands, Philip II, deteriorating relations',
+        '2.3 Outbreak of war with Spain 1585–88 — Treaty of Nonsuch, Drake\'s raids, causes',
+        '2.4 The Spanish Armada 1588 — events, English tactics, fireships, storms, significance',
+      ]},
+      { label:'Chapter 3 — Elizabethan Society in the Age of Exploration', topics:[
+        '3.1 Education and leisure — grammar schools, theatre (Globe), sports, pastimes',
+        '3.2 The problem of the poor — causes of poverty, Elizabethan Poor Laws, attitudes',
+        '3.3 Exploration and voyages of discovery — Drake, Hawkins, circumnavigation 1577–80',
+        '3.4 Raleigh and Virginia — colonisation attempts 1585 & 1587, Lost Colony, significance',
+      ]},
+    ]
+  },
+];
+
+// ── STORAGE ───────────────────────────────────────────────────
+let prog={};
+function save(){ try{ localStorage.setItem(SK,JSON.stringify(prog)); }catch(e){} }
+function load(){ try{ prog=JSON.parse(localStorage.getItem(SK)||'{}'); }catch(e){ prog={}; } }
+function getC(bid,t){ return (prog[bid]||{})[t]||0; }
+function setC(bid,t,v){
+  if(!prog[bid]) prog[bid]={};
+  prog[bid][t]= prog[bid][t]===v ? 0 : v;
+  save(); refreshDash(); refreshBars();
+}
+
+// ── PAGES ─────────────────────────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  const idx={dashboard:0,tracker:1,questions:2}[id];
+  document.querySelectorAll('.nb')[idx].classList.add('active');
+}
+function showQSec(id,btn){
+  document.querySelectorAll('.qsec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('qs-'+id).classList.add('active');
+  document.querySelectorAll('.qt').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function refreshDash(){
+  let total=0,conf=0,weak=0,amb=0,none=0;
+  const weakItems=[];
+  BOOKS.forEach(b=>b.chapters.forEach(ch=>ch.topics.forEach(t=>{
+    total++;
+    const c=getC(b.id,t);
+    if(c===3) conf++;
+    else if(c===1){ weak++; weakItems.push({name:t.replace(/^\d+\.\d+\s/,''),book:b.title.split(' ').slice(0,2).join(' ')}); }
+    else if(c===2) amb++;
+    else none++;
+  })));
+  document.getElementById('d-conf').textContent=conf;
+  document.getElementById('d-conf-sub').textContent='of '+total+' topics';
+  document.getElementById('d-weak').textContent=weak;
+  document.getElementById('d-amber').textContent=amb;
+  document.getElementById('d-none').textContent=none;
+  document.getElementById('d-bar').style.width=(total?Math.round(conf/total*100):0)+'%';
+  const wl=document.getElementById('weak-list');
+  if(!weakItems.length){
+    wl.innerHTML='<div class="weak-none">No topics marked as not confident yet — rate topics in the Spec Tracker to see weak areas here.</div>';
+  } else {
+    wl.innerHTML=weakItems.slice(0,8).map(w=>`
+      <div class="weak-item">
+        <span class="weak-item-name">${w.name}</span>
+        <span class="weak-item-book">${w.book}</span>
+        <button class="weak-practise" onclick="showPage('questions')">Practise ↗</button>
+      </div>`).join('');
+  }
+  // book progress bars
+  const bpl=document.getElementById('book-prog-list');
+  bpl.innerHTML=BOOKS.map(b=>{
+    let bt=0,bc=0;
+    b.chapters.forEach(ch=>ch.topics.forEach(t=>{ bt++; if(getC(b.id,t)===3) bc++; }));
+    const pct=bt?Math.round(bc/bt*100):0;
+    return `<div class="bpl-item">
+      <div class="bpl-top"><div class="bpl-name">${b.title}</div><div class="bpl-pct">${pct}%</div></div>
+      <div class="bpl-bar"><div class="bpl-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── TRACKER ───────────────────────────────────────────────────
+function buildTracker(){
+  const cont=document.getElementById('tracker-content');
+  cont.innerHTML='';
+  BOOKS.forEach((book,bi)=>{
+    const sec=document.createElement('div');
+    sec.className='book-sec';
+    sec.id='bsec-'+book.id;
+    let inner='';
+    book.chapters.forEach(ch=>{
+      inner+=`<div class="ch-label">${ch.label}</div>`;
+      ch.topics.forEach(t=>{
+        const te=t.replace(/'/g,"\\'");
+        inner+=`<div class="topic-row">
+          <div class="topic-name">${t}</div>
+          <div class="conf-grp">
+            <button class="cb c1" data-b="${book.id}" data-t="${t}" data-v="1" onclick="handleCB(this)">Not confident</button>
+            <button class="cb c2" data-b="${book.id}" data-t="${t}" data-v="2" onclick="handleCB(this)">Getting there</button>
+            <button class="cb c3" data-b="${book.id}" data-t="${t}" data-v="3" onclick="handleCB(this)">Confident</button>
+          </div>
+        </div>`;
+      });
+    });
+    sec.innerHTML=`
+      <div class="book-head" onclick="toggleBook('${book.id}')">
+        <div class="bh-left">
+          <div class="bh-num">${bi+1}</div>
+          <div><div class="bh-title">${book.title}</div><div class="bh-sub">${book.sub}</div></div>
+        </div>
+        <div class="bh-right">
+          <div class="bh-pct" id="bpct-${book.id}">0%</div>
+          <div class="bh-chev" id="bchev-${book.id}">▾</div>
+        </div>
+      </div>
+      <div class="book-prog"><div class="book-prog-fill" id="bpf-${book.id}" style="width:0%"></div></div>
+      <div class="book-body" id="bbody-${book.id}">${inner}</div>`;
+    cont.appendChild(sec);
+  });
+  applyRatings();
+  refreshBars();
+}
+
+function handleCB(btn){
+  setC(btn.dataset.b, btn.dataset.t, parseInt(btn.dataset.v));
+  btn.closest('.topic-row').querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));
+  if(getC(btn.dataset.b,btn.dataset.t)===parseInt(btn.dataset.v)) btn.classList.add('on');
+}
+
+function applyRatings(){
+  document.querySelectorAll('.cb[data-b]').forEach(btn=>{
+    btn.classList.toggle('on', getC(btn.dataset.b,btn.dataset.t)===parseInt(btn.dataset.v));
+  });
+}
+
+function toggleBook(id){
+  document.getElementById('bbody-'+id).classList.toggle('open');
+  document.getElementById('bchev-'+id).classList.toggle('open');
+}
+
+function refreshBars(){
+  BOOKS.forEach(b=>{
+    let bt=0,bc=0;
+    b.chapters.forEach(ch=>ch.topics.forEach(t=>{ bt++; if(getC(b.id,t)===3) bc++; }));
+    const pct=bt?Math.round(bc/bt*100):0;
+    const pe=document.getElementById('bpct-'+b.id);
+    const pf=document.getElementById('bpf-'+b.id);
+    if(pe) pe.textContent=pct+'%';
+    if(pf) pf.style.width=pct+'%';
+  });
+}
+
+// ── QUESTION GENERATOR ────────────────────────────────────────
+const TN={
+  weimar_origins:'the origins of the Weimar Republic',weimar_challenges:'the early challenges to the Weimar Republic',
+  weimar_recovery:'the recovery of the Weimar Republic under Stresemann',weimar_society:'changes in German society 1924–29',
+  nazi_early:'the early development of the Nazi Party',nazi_putsch:'the Munich Putsch 1923',
+  nazi_growth:'the growth of Nazi support 1929–32',nazi_chancellor:'how Hitler became Chancellor in 1933',
+  nazi_dictatorship:'the creation of the Nazi dictatorship 1933–34',nazi_police:'the Nazi police state',
+  nazi_propaganda:'Nazi propaganda and control of information',nazi_opposition:'opposition and resistance in Nazi Germany',
+  nazi_women:'Nazi policies towards women',nazi_youth:'Nazi policies towards young people',
+  nazi_employment:'employment and living standards in Nazi Germany',nazi_persecution:'the persecution of minorities in Nazi Germany',
+  cw_tensions:'early tensions between East and West',cw_development:'the development of the Cold War',
+  cw_intensifies:'the intensification of the Cold War',cw_berlin:'the Berlin crisis 1958–63',
+  cw_cuba:'the Cuban Missile Crisis 1962',cw_czech:'the Soviet invasion of Czechoslovakia 1968',
+  cw_detente:'détente and attempts to reduce Cold War tensions',cw_flashpoints:'Cold War flashpoints in the 1970s–80s',
+  cw_collapse:'the collapse of Soviet control in Eastern Europe',
+  war_medieval_nature:'the nature of medieval warfare 1250–1500',war_medieval_exp:'the experience of warfare 1250–1500',
+  war_falkirk:'the Battle of Falkirk 1298',war_agincourt:'the Battle of Agincourt 1415',
+  war_1500_nature:'the nature of warfare 1500–1700',war_1500_exp:'the experience of war 1500–1700',
+  war_naseby:'the Battle of Naseby 1645',war_1700_nature:'the nature of warfare 1700–1850',
+  war_1700_exp:'the experience of warfare in the 18th century',war_1850_nature:'the nature of warfare 1850–1900',
+  war_waterloo:'the Battle of Waterloo 1815',war_balaclava:'the Battle of Balaclava 1854',
+  war_modern_nature:'the nature of modern warfare 1900–present',war_modern_exp:'the experience of war 1900–present',
+  war_wwi:'the Western Front and the Battle of the Somme 1916',war_iraq:'the Iraq War 2003',
+  war_blitz1:'the First Blitz on London 1940–41',war_blitz_impact:'the impact of the Blitz on civilians',
+  war_v1v2:'the V1 and V2 attacks on London 1944–45',
+  eliz_accession:'Elizabeth I\'s situation on her accession in 1558',eliz_religion:'the Elizabethan religious settlement 1559',
+  eliz_challenge_rel:'challenges to the Elizabethan religious settlement',eliz_mary:'the problem of Mary Queen of Scots',
+  eliz_plots:'plots and revolts against Elizabeth I',eliz_spain:'relations between England and Spain',
+  eliz_war_spain:'the outbreak of war with Spain 1585–88',eliz_armada:'the Spanish Armada 1588',
+  eliz_education:'education and leisure in Elizabethan England',eliz_poor:'the problem of the poor in Elizabethan England',
+  eliz_exploration:'Elizabethan voyages of exploration and discovery',eliz_virginia:'Raleigh\'s attempts to colonise Virginia',
+};
+
+const DESC_QS={
+  nazi_putsch:'Describe two features of the Munich Putsch of November 1923.',
+  nazi_chancellor:'Describe two features of the political crisis of 1932–33 that helped Hitler become Chancellor.',
+  nazi_police:'Describe two features of the Nazi police state.',
+  nazi_propaganda:'Describe two features of Nazi propaganda under Goebbels.',
+  nazi_youth:'Describe two features of the Hitler Youth movement.',
+  nazi_persecution:'Describe two features of the Nuremberg Laws 1935.',
+  cw_berlin:'Describe two features of the Berlin Wall built in August 1961.',
+  cw_cuba:'Describe two features of the Cuban Missile Crisis of October 1962.',
+  cw_detente:'Describe two features of the policy of détente in the 1970s.',
+  war_falkirk:'Describe two features of the Battle of Falkirk 1298.',
+  war_agincourt:'Describe two features of the Battle of Agincourt 1415.',
+  war_naseby:'Describe two features of the New Model Army created in 1645.',
+  war_blitz1:'Describe two features of the Blitz on London 1940–41.',
+  eliz_religion:'Describe two features of the Elizabethan religious settlement of 1559.',
+  eliz_armada:'Describe two features of the Spanish Armada of 1588.',
+  eliz_poor:'Describe two features of Elizabethan attitudes towards the poor.',
+};
+
+const EXP_QS={
+  nazi_chancellor:'Explain why Hitler was able to become Chancellor of Germany in January 1933.\n\n(You may use the following in your answer:\n• The impact of the Great Depression\n• The role of Hindenburg and von Papen\n\nYou must also use information of your own.)',
+  nazi_dictatorship:'Explain why Hitler was able to create a dictatorship in Germany by 1934.\n\n(You may use the following in your answer:\n• The Reichstag Fire February 1933\n• The Night of the Long Knives June 1934\n\nYou must also use information of your own.)',
+  nazi_persecution:'Explain why the Nazis persecuted Jewish people in the years 1933–39.\n\n(You may use the following in your answer:\n• Nazi ideology and anti-Semitism\n• The Nuremberg Laws 1935\n\nYou must also use information of your own.)',
+  cw_cuba:'Explain why the Cuban Missile Crisis developed in October 1962.\n\n(You may use the following in your answer:\n• The failed Bay of Pigs invasion 1961\n• The Soviet decision to install missiles in Cuba\n\nYou must also use information of your own.)',
+  cw_berlin:'Explain why the Berlin Wall was built in August 1961.\n\n(You may use the following in your answer:\n• The refugee crisis — mass emigration from East Germany\n• Khrushchev\'s pressure on West Berlin\n\nYou must also use information of your own.)',
+  cw_collapse:'Explain why Soviet control in Eastern Europe collapsed between 1989 and 1991.\n\n(You may use the following in your answer:\n• Gorbachev\'s policies of glasnost and perestroika\n• Economic problems facing the Soviet Union\n\nYou must also use information of your own.)',
+  eliz_armada:'Explain why the Spanish Armada failed in 1588.\n\n(You may use the following in your answer:\n• English tactics including the use of fireships\n• The impact of storms and weather\n\nYou must also use information of your own.)',
+  eliz_mary:'Explain why Mary Queen of Scots was a significant problem for Elizabeth I.\n\n(You may use the following in your answer:\n• Mary\'s claim to the English throne\n• Catholic plots involving Mary\n\nYou must also use information of your own.)',
+  eliz_poor:'Explain why the problem of poverty increased in Elizabethan England.\n\n(You may use the following in your answer:\n• Population growth\n• Enclosure of common land\n\nYou must also use information of your own.)',
+  war_wwi:'Explain why the Battle of the Somme resulted in such heavy British casualties on 1 July 1916.\n\n(You may use the following in your answer:\n• The failure of the artillery bombardment to destroy German defences\n• German defensive positions and machine guns\n\nYou must also use information of your own.)',
+};
+
+const ESSAY_QS={
+  nazi_chancellor:'"The Great Depression was the main reason why Hitler became Chancellor of Germany in January 1933." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• The impact of the Great Depression on support for the Nazi Party\n• The role of Hindenburg and von Papen\n\nYou must also use information of your own.)',
+  nazi_police:'"Terror and intimidation were the main methods the Nazis used to control Germany in the years 1933–39." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• The Nazi police state — SS, Gestapo, courts\n• Propaganda and censorship under Goebbels\n\nYou must also use information of your own.)',
+  nazi_youth:'"Nazi youth policies were successful in winning the support of German young people by 1939." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• The Hitler Youth and League of German Girls\n• Opposition and resistance among young people\n\nYou must also use information of your own.)',
+  cw_cuba:'"Kennedy\'s handling of the Cuban Missile Crisis was the main reason it was resolved peacefully in 1962." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• Kennedy\'s decision to impose a naval blockade\n• Khrushchev\'s decision to withdraw Soviet missiles\n\nYou must also use information of your own.)',
+  cw_collapse:'"Gorbachev was mainly responsible for the collapse of Soviet control in Eastern Europe by 1991." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• Gorbachev\'s policies of glasnost and perestroika\n• Economic problems facing the Soviet Union\n\nYou must also use information of your own.)',
+  eliz_armada:'"Bad weather was the main reason the Spanish Armada failed in 1588." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• The role of storms in destroying Armada ships\n• English tactics and naval superiority\n\nYou must also use information of your own.)',
+  eliz_mary:'"Mary Queen of Scots was the greatest threat Elizabeth I faced during her reign." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• The Catholic plots involving Mary Queen of Scots\n• The threat posed by Spain and Philip II\n\nYou must also use information of your own.)',
+  war_modern_nature:'"Technology was the main factor that changed the nature of warfare in the period c.1900–present." How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• New weapons technology — machine guns, tanks, aircraft, nuclear weapons\n• The role of tactics and military organisation\n\nYou must also use information of your own.)',
+};
+
+const QT={
+  describe4:{label:'4 marks — Describe two features',marks:'4 marks',
+    gen(t){ return DESC_QS[t]||`Describe two features of ${TN[t]||t}.`; },
+    tips:'<strong>Structure:</strong> Two separate features — one per paragraph. Each needs a specific supporting detail. No analysis required. Aim for 3–4 lines per feature. Do not write an introduction or conclusion.'
+  },
+  infer4:{label:'4 marks — Source inference',marks:'4 marks',
+    gen(t){ return `Study Source A (provided in the real exam).\n\nGive two things you can infer from Source A about ${TN[t]||t}.`; },
+    tips:'<strong>Formula:</strong> "From Source A I can infer that... [inference]. I know this because the source says \'[quote]\'." Repeat for the second inference. Do not simply describe the source — you must go beyond what is literally stated.'
+  },
+  explain12:{label:'12 marks — Explain why',marks:'12 marks',
+    gen(t){ return EXP_QS[t]||`Explain why ${TN[t]||t} was significant.\n\n(You may use the following in your answer:\n• [Factor 1]\n• [Factor 2]\n\nYou must also use information of your own.)`; },
+    tips:'<strong>Structure:</strong> Three paragraphs — two using the bullet hints, one from your own knowledge. Each paragraph: Point → Explain → Evidence → Link (PEEL). The own-knowledge paragraph is essential for top marks. Use precise dates and names as evidence.'
+  },
+  useful12:{label:'12 marks — Source utility',marks:'12 marks',
+    gen(t){ return `How useful is Source B (provided in the real exam) for an enquiry into ${TN[t]||t}?\n\nExplain your answer, using Source B and your knowledge of the historical context.`; },
+    tips:'<strong>NOP framework:</strong> <strong>N</strong>ature — what type of source and what does the format tell us? <strong>O</strong>rigin — who made it, when, why? <strong>P</strong>urpose — what was it trying to achieve? Follow with contextual knowledge. Never say a source is "not useful" — always argue how useful and for what purpose.'
+  },
+  essay16:{label:'16 marks — How far do you agree',marks:'16 marks + 4 SPaG = 20 marks total',
+    gen(t){ return ESSAY_QS[t]||`"[Statement about ${TN[t]||t}.]" How far do you agree with this statement? Explain your answer.\n\n(You may use the following in your answer:\n• [Factor 1]\n• [Factor 2]\n\nYou must also use information of your own.)`; },
+    tips:'<strong>Structure:</strong> Brief intro with your overall argument → 2–3 paragraphs agreeing → 1–2 paragraphs disagreeing → Conclusion with a clear, justified judgement. <strong>SPaG matters</strong> — 4 extra marks. Aim for 4–5 paragraphs. The conclusion must make a decision, not just summarise.'
+  },
+  interp16:{label:'16 marks — Interpretation question',marks:'16 marks',
+    gen(t){ return `Study Interpretations 1 and 2 (provided in the real exam). They give different views about ${TN[t]||t}.\n\nHow far do you agree with Interpretation 1?\n\nExplain your answer, referring to both interpretations and using your own knowledge of the historical context.`; },
+    tips:'<strong>Warfare Through Time only.</strong> Structure: Summarise what each interpretation argues → paragraphs evaluating Interpretation 1 with own knowledge → paragraphs evaluating Interpretation 2 → clear conclusion on which is more convincing and why. You must engage with <em>both</em> interpretations — never ignore one.'
+  },
+};
+
+function generateQ(){
+  const t=document.getElementById('gen-topic').value;
+  const qt=document.getElementById('gen-qtype').value;
+  const out=document.getElementById('gen-out');
+  if(!t||!qt){ out.innerHTML='<div class="gen-placeholder">Please select both a topic and a question type</div>'; return; }
+  const tmpl=QT[qt];
+  out.innerHTML=`
+    <div class="gen-badge">${tmpl.label}</div>
+    <div class="gen-q">${tmpl.gen(t).replace(/\n/g,'<br>')}</div>
+    <div class="gen-marks">${tmpl.marks}</div>
+    <div class="gen-tips">${tmpl.tips}</div>`;
+}
+
+// ── PAST PAPERS ───────────────────────────────────────────────
+const PP=[
+  {year:'June 2024',papers:[
+    {title:'Weimar & Nazi Germany — Option 31',meta:'Paper 3 · Option 31',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-31-que-20240612.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-31-rms-20240822.pdf'},
+    {title:'Warfare Through Time — Option 12',meta:'Paper 1 · Thematic study',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-12-que-20240516.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-12-rms-20240822.pdf'},
+    {title:'Cold War — Paper P1',meta:'Paper 2 · Modern depth study',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-p1-que-20240605.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-p1-rms-20240822.pdf'},
+    {title:'Early Elizabethan England — Paper B1',meta:'Paper 3 · Period study',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-b1-que-20240605.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-b1-rms-20240822.pdf'},
+  ]},
+  {year:'June 2023',papers:[
+    {title:'Weimar & Nazi Germany — Option 31',meta:'Paper 3',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-31-que-20230614.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-31-rms-20230823.pdf'},
+    {title:'Warfare Through Time — Option 12',meta:'Paper 1',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-12-que-20230518.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-12-rms-20230823.pdf'},
+    {title:'Cold War — Paper P1',meta:'Paper 2',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-p1-que-20230605.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-p1-rms-20230823.pdf'},
+    {title:'Early Elizabethan England — Paper B1',meta:'Paper 3',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-b1-que-20230605.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-b1-rms-20230823.pdf'},
+  ]},
+  {year:'June 2022',papers:[
+    {title:'Weimar & Nazi Germany — Option 31',meta:'Paper 3',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-31-que-20220614.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-31-rms-20220825.pdf'},
+    {title:'Warfare Through Time — Option 12',meta:'Paper 1',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-12-que-20220519.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-12-rms-20220825.pdf'},
+    {title:'Cold War — Paper P1',meta:'Paper 2',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-p1-que-20220606.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-p1-rms-20220825.pdf'},
+    {title:'Early Elizabethan England — Paper B1',meta:'Paper 3',
+     qp:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-b1-que-20220606.pdf',
+     ms:'https://qualifications.pearson.com/content/dam/pdf/GCSE/History/2016/Exam-materials/1hi0-b1-rms-20220825.pdf'},
+  ]},
+];
+
+function buildPP(){
+  const c=document.getElementById('pp-content');
+  PP.forEach(yr=>{
+    c.innerHTML+=`<div class="pp-year">${yr.year}</div>`;
+    const g=document.createElement('div'); g.className='pp-grid';
+    yr.papers.forEach(p=>{
+      g.innerHTML+=`<div class="pp-card">
+        <div><div class="pp-title">${p.title}</div><div class="pp-meta">${p.meta}</div></div>
+        <div class="pp-links">
+          <a class="pp-link" href="${p.qp}" target="_blank">Q paper</a>
+          <a class="pp-link ms" href="${p.ms}" target="_blank">Mark scheme</a>
+        </div>
+      </div>`;
+    });
+    c.appendChild(g);
+  });
+}
+
+// ── EXPLAINER ─────────────────────────────────────────────────
+const EXP=[
+  {title:'Describe two features',marks:'4 marks',papers:'All papers',
+   stem:'"Describe two features of [topic]."',
+   pts:['Two separate features required','Each needs a specific supporting detail or example','No analysis needed — recall and evidence only','No introduction or conclusion','Aim for 3–4 lines per feature'],
+   tip:'Feature → "For example..." Keep it factual. One feature per paragraph.'},
+  {title:'Source inference',marks:'4 marks',papers:'Warfare & Cold War papers',
+   stem:'"Give two things you can infer from Source A about [topic]."',
+   pts:['Must make an inference — go beyond what is literally shown','Formula: "I can infer that... I know this because the source says \'...\'"','Quote directly from the source to support each inference','Two separate inferences needed','Do not just describe what you can see'],
+   tip:'Inference ≠ description. "The source shows soldiers" is description. "I can infer morale was low because..." is an inference.'},
+  {title:'Explain why',marks:'12 marks',papers:'All papers',
+   stem:'"Explain why [event happened]. You may use: [Hint 1] [Hint 2]. You must also use information of your own."',
+   pts:['Three paragraphs — two using the bullet hints, one own knowledge','PEEL: Point → Explain → Evidence → Link back to question','Own knowledge paragraph is essential for top marks','Use precise dates, names and statistics','Link each paragraph back to "why"'],
+   tip:'The third own-knowledge paragraph is where most students drop marks. Plan it before you start writing.'},
+  {title:'Source utility',marks:'12 marks',papers:'Warfare & Cold War papers',
+   stem:'"How useful is Source B for an enquiry into [topic]?"',
+   pts:['NOP: Nature — what type of source?','Origin — who made it, when, why?','Purpose — what was it trying to do?','Add contextual knowledge to assess completeness','Never say "not useful" — argue how useful and for what'],
+   tip:'Always ask "useful for what specifically?" A propaganda poster is very useful for studying Nazi methods but limited for facts about living standards.'},
+  {title:'How far do you agree — essay',marks:'16 marks + 4 SPaG',papers:'All papers',
+   stem:'"[Statement]." How far do you agree? Explain your answer."',
+   pts:['Intro: state your overall judgement briefly','2–3 paragraphs agreeing with the statement','1–2 paragraphs disagreeing (counter-argument)','Conclusion: clear, justified judgement — not just a summary','SPaG: 4 extra marks for accuracy and structure'],
+   tip:'The conclusion must make a decision and explain why one side outweighs the other. Examiners want a judgement, not a list.'},
+  {title:'Interpretation question',marks:'16 marks',papers:'Warfare Through Time only',
+   stem:'"How far do you agree with Interpretation 1? Refer to both interpretations and your own knowledge."',
+   pts:['Must engage with both interpretations throughout','Explain what each interpretation argues','Use own knowledge to support or challenge each view','Evaluate which is more convincing','Clear conclusion with a justified judgement'],
+   tip:'Never ignore Interpretation 2. Even if you agree with Interpretation 1, you must show you have considered both — this is the key to top marks.'},
+];
+
+function buildExp(){
+  const c=document.getElementById('exp-content');
+  EXP.forEach(e=>{
+    c.innerHTML+=`<div class="exp-card">
+      <div class="exp-header"><div class="exp-title">${e.title}</div><div class="exp-marks">${e.marks}</div></div>
+      <div class="exp-papers">${e.papers}</div>
+      <div class="exp-stem">${e.stem}</div>
+      <ul class="exp-ul">${e.pts.map(p=>`<li>${p}</li>`).join('')}</ul>
+      <div class="exp-tip">${e.tip}</div>
+    </div>`;
+  });
+}
+
+// ── DAILY QUIZ ────────────────────────────────────────────────
+const QQS=[
+  {topic:'Weimar Germany',q:'In what year did Hitler attempt the Munich Putsch?',opts:['1921','1923','1925','1929'],ans:1,exp:'The Munich Putsch took place on 8–9 November 1923. Hitler attempted to seize power in Bavaria as Germany was in crisis — hyperinflation had destroyed savings and French troops had occupied the Ruhr industrial region.'},
+  {topic:'Weimar Germany',q:'What was the Rentenmark?',opts:['A new political party','A currency introduced in 1923 to end hyperinflation','A government welfare programme','A trade agreement with the USA'],ans:1,exp:'The Rentenmark was introduced in November 1923 by Stresemann. It replaced the worthless Papiermark and stabilised the German economy by being backed by land and industrial assets rather than gold. It was a crucial step in Germany\'s economic recovery.'},
+  {topic:'Weimar Germany',q:'What did the Dawes Plan (1924) do?',opts:['Banned the Nazi Party','Reorganised German reparations payments and provided US loans','Created the Weimar Constitution','Established the League of Nations'],ans:1,exp:'The Dawes Plan (1924) reorganised Germany\'s reparations payments into manageable annual instalments and provided American loans to help Germany recover economically. It was a key part of the Stresemann recovery and led to the "Golden Twenties".'},
+  {topic:'Nazi Germany',q:'Which event did the Nazis use to justify the Enabling Act 1933?',opts:['Night of Long Knives','Wall Street Crash','Reichstag Fire','Munich Agreement'],ans:2,exp:'The Reichstag Fire of 27 February 1933 — attributed to Dutch communist Marinus van der Lubbe — was used by Hitler to push through the Decree for the Protection of People and State, enabling mass arrests of political opponents and paving the way for the Enabling Act.'},
+  {topic:'Nazi Germany',q:'What happened during the Night of the Long Knives (1934)?',opts:['Jews were attacked across Germany','Hitler ordered the SS to murder the SA leadership and political rivals','Germany remilitarised the Rhineland','The Nuremberg Laws were announced'],ans:1,exp:'On 30 June – 2 July 1934, Hitler ordered the SS to murder Ernst Röhm and the SA leadership, along with other political rivals including former Chancellor von Schleicher. This secured the loyalty of the German Army, who were suspicious of the SA\'s ambitions.'},
+  {topic:'Nazi Germany',q:'What did the Nuremberg Laws (1935) introduce?',opts:['Concentration camps for Jews','Removal of Jewish citizenship and ban on marriage to non-Jews','Compulsory deportation of Jews','The Final Solution'],ans:1,exp:'The Nuremberg Laws stripped Jews of German citizenship (Reich Citizenship Law) and banned marriage or sexual relations between Jews and non-Jews (Law for the Protection of German Blood and German Honour). They were a major step in the systematic legalised persecution of Jewish people.'},
+  {topic:'Nazi Germany',q:'What was Kristallnacht (November 1938)?',opts:['The night the Berlin Wall was built','A coordinated attack on Jewish businesses, synagogues and homes across Germany','The night Hitler became Chancellor','The date the Nuremberg Laws were passed'],ans:1,exp:'Kristallnacht ("Night of Broken Glass") on 9–10 November 1938 was a coordinated nationwide pogrom against Jewish people — around 7,500 Jewish businesses were destroyed, 1,400 synagogues burned, 91 Jews killed and 30,000 sent to concentration camps. It marked a dramatic escalation in Nazi persecution.'},
+  {topic:'Cold War',q:'What was the Marshall Plan (1948)?',opts:['A military alliance against the USSR','Over $13 billion in US aid to rebuild Western European economies','A plan to divide Germany into zones','A nuclear weapons programme'],ans:1,exp:'The Marshall Plan, announced by US Secretary of State George Marshall in 1947 and implemented from 1948, provided over $13 billion in economic aid to rebuild Western European economies. Its strategic purpose was to prevent poverty-stricken countries from turning to Communism.'},
+  {topic:'Cold War',q:'In what year was the Berlin Wall built?',opts:['1958','1959','1961','1963'],ans:2,exp:'The Berlin Wall was built overnight on 12–13 August 1961. East Germany\'s leader Walter Ulbricht ordered its construction to stop the mass emigration of skilled workers to West Germany — approximately 3.5 million East Germans had fled since 1949, causing a severe economic and political crisis.'},
+  {topic:'Cold War',q:'Who were the two main leaders during the Cuban Missile Crisis?',opts:['Stalin and Truman','Khrushchev and Kennedy','Brezhnev and Johnson','Gorbachev and Reagan'],ans:1,exp:'The Cuban Missile Crisis (October 1962) involved Soviet leader Nikita Khrushchev and US President John F. Kennedy. After 13 tense days, it was resolved when Khrushchev agreed to remove Soviet missiles from Cuba in exchange for a US pledge not to invade Cuba and the secret removal of US missiles from Turkey.'},
+  {topic:'Cold War',q:'What does SALT stand for?',opts:['Soviet American Land Treaty','Strategic Arms Limitation Talks','Superpower Alliance for Lasting Truce','Soviet Atlantic League Treaty'],ans:1,exp:'SALT stands for Strategic Arms Limitation Talks. SALT I (1972) was signed by Nixon and Brezhnev and froze the number of nuclear missiles each side could have. SALT II (1979) was signed but never ratified by the US Senate after the Soviet invasion of Afghanistan in December 1979.'},
+  {topic:'Cold War',q:'What was the Brezhnev Doctrine (1968)?',opts:['A policy of nuclear disarmament','The USSR\'s right to intervene in any socialist country threatening to leave the Soviet bloc','An economic aid programme for Eastern Europe','A policy of détente with the West'],ans:1,exp:'The Brezhnev Doctrine, announced after the Soviet invasion of Czechoslovakia in 1968, stated that the USSR had the right to intervene militarily in any socialist country that threatened to abandon Communism or leave the Soviet bloc. It justified Soviet dominance over Eastern Europe until Gorbachev effectively renounced it in 1989.'},
+  {topic:'Warfare',q:'What weapon gave English forces a decisive advantage at Agincourt (1415)?',opts:['Cannon','Longbow','Crossbow','Pike'],ans:1,exp:'The English longbow was decisive at Agincourt. English and Welsh archers could fire 10–12 arrows per minute with a range of 200 metres. The massed arrow storms devastated the heavily armoured French cavalry, who were funnelled into a narrow muddy field. The English lost around 400 men compared to thousands of French casualties.'},
+  {topic:'Warfare',q:'What was significant about the New Model Army (1645)?',opts:['It was the first army to use gunpowder','It was a professional, paid, meritocratic army where promotion was based on ability not class','It was created by King Charles I','It fought at the Battle of Waterloo'],ans:1,exp:'The New Model Army, created by Parliament in 1645, was revolutionary because it was professional, regularly paid, and promoted officers based on military ability rather than social class. Commanded by Fairfax with Cromwell as cavalry commander, it defeated the Royalists decisively at the Battle of Naseby in June 1645.'},
+  {topic:'Warfare',q:'When did the Battle of the Somme begin?',opts:['June 1916','July 1916','August 1916','September 1916'],ans:1,exp:'The Battle of the Somme began on 1 July 1916 — the bloodiest single day in British military history, with approximately 57,470 British casualties on the first day alone. Despite months of fighting and over one million total casualties on all sides, the maximum advance was only around 10 kilometres.'},
+  {topic:'Elizabethan England',q:'In what year was the Elizabethan religious settlement passed?',opts:['1558','1559','1563','1570'],ans:1,exp:'The Acts of Supremacy and Uniformity were passed in 1559. The Act of Supremacy made Elizabeth Supreme Governor (not Head) of the Church of England — a deliberate compromise to appease Catholics. The Act of Uniformity standardised worship using a revised Prayer Book and required church attendance on Sundays.'},
+  {topic:'Elizabethan England',q:'Who commanded the Spanish Armada in 1588?',opts:['Philip II of Spain','Duke of Parma','Duke of Medina Sidonia','Don John of Austria'],ans:2,exp:'The Duke of Medina Sidonia commanded the Armada despite having no naval experience. Philip II\'s original choice, the Marquis of Santa Cruz, died in February 1588. Medina Sidonia actually warned Philip the plan was too risky but was overruled. His inexperience contributed to the Armada\'s failure.'},
+  {topic:'Elizabethan England',q:'Which plot was uncovered through coded letters hidden in beer barrels?',opts:['Ridolfi Plot','Throckmorton Plot','Babington Plot','Northern Earls Revolt'],ans:2,exp:'The Babington Plot (1586) involved Anthony Babington planning to assassinate Elizabeth and put Mary Queen of Scots on the throne with Spanish support. Elizabeth\'s spymaster Francis Walsingham intercepted coded letters hidden in beer barrel bungs, proving Mary\'s agreement to the plot. This provided the evidence needed to execute Mary in February 1587.'},
+  {topic:'Elizabethan England',q:'In what year did Francis Drake complete his circumnavigation of the globe?',opts:['1573','1577','1580','1585'],ans:2,exp:'Drake completed his circumnavigation in September 1580, returning to Plymouth on the Golden Hinde after nearly 3 years at sea. Elizabeth I knighted him on the deck of his ship. The voyage yielded plundered treasure worth around £600,000 — more than the Crown\'s entire annual income — mainly taken from Spanish ships and ports.'},
+];
+
+let qState={qs:[],cur:0,score:0};
+
+function openQuiz(){
+  const topics=['Weimar Germany','Nazi Germany','Cold War','Warfare','Elizabethan England'];
+  const topic=topics[Math.floor(Math.random()*topics.length)];
+  document.getElementById('qb-topic').textContent=topic;
+  const pool=QQS.filter(q=>q.topic===topic).sort(()=>Math.random()-0.5).slice(0,5);
+  qState={qs:pool,cur:0,score:0,topic};
+  document.getElementById('quiz-modal').classList.add('open');
+  renderQQ();
+}
+function closeQuiz(){ document.getElementById('quiz-modal').classList.remove('open'); }
+
+function renderQQ(){
+  const {qs,cur}=qState;
+  if(cur>=qs.length){ renderScore(); return; }
+  const q=qs[cur];
+  document.getElementById('qm-fill').style.width=Math.round(cur/qs.length*100)+'%';
+  document.getElementById('qm-body').innerHTML=`
+    <div class="qm-num">Question ${cur+1} of ${qs.length}</div>
+    <div class="qm-topic">${q.topic}</div>
+    <div class="qm-q">${q.q}</div>
+    <div class="qm-opts">${q.opts.map((o,i)=>`<button class="qm-opt" onclick="answerQ(this,${i})">${o}</button>`).join('')}</div>
+    <div class="qm-exp" id="qm-exp">${q.exp}</div>
+    <button class="qm-next" id="qm-nxt" onclick="nextQ()">Next question →</button>`;
+}
+
+function answerQ(btn,idx){
+  const q=qState.qs[qState.cur];
+  document.querySelectorAll('.qm-opt').forEach(b=>b.disabled=true);
+  if(idx===q.ans){ btn.classList.add('correct'); qState.score++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.qm-opt')[q.ans].classList.add('reveal'); }
+  document.getElementById('qm-exp').classList.add('show');
+  document.getElementById('qm-nxt').classList.add('show');
+}
+
+function nextQ(){ qState.cur++; renderQQ(); }
+
+function renderScore(){
+  const {score,qs,topic}=qState;
+  const pct=Math.round(score/qs.length*100);
+  const msgs={100:'Perfect. Outstanding recall.',80:'Really strong — keep this up.',60:'Good effort. Review the ones you missed.',40:'Some gaps here — worth revisiting this topic.',0:'This topic needs more attention. That\'s what revision is for.'};
+  const k=Object.keys(msgs).map(Number).sort((a,b)=>b-a).find(k=>pct>=k);
+  document.getElementById('qm-fill').style.width='100%';
+  document.getElementById('qm-body').innerHTML=`
+    <div class="qm-score">
+      <div class="qm-score-n">${score}/${qs.length}</div>
+      <div class="qm-score-label">${topic} &middot; ${pct}%</div>
+      <div class="qm-score-msg">${msgs[k]}</div>
+    </div>
+    <button class="qm-next show" style="margin-top:1.25rem" onclick="openQuiz()">Try another topic</button>
+    <button class="qm-again" onclick="closeQuiz()">Back to revision</button>`;
+}
+
+// ── BOOT ──────────────────────────────────────────────────────
+function boot(){
+  load();
+  buildTracker();
+  buildPP();
+  buildExp();
+  refreshDash();
+  const topics=['Weimar Germany','Nazi Germany','Cold War','Warfare','Elizabethan England'];
+  document.getElementById('qb-topic').textContent=topics[Math.floor(Math.random()*topics.length)];
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem(AK)==='1'){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').style.display='block';
+    boot();
+  }
+});
+</script>
+</body>
+</html>
